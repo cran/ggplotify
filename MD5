@@ -1,0 +1,15 @@
+63179b134e3ab2bc2dcb1f1a57e6fab5 *DESCRIPTION
+45990592bcdc2e16aa7f0e23676637fc *NAMESPACE
+66605726c5670f317fe9771bb4f6db33 *NEWS.md
+b74a07239e1f98ac92582f1c208d0e91 *R/as-ggplot.R
+0623e06dc579696cde7c1e55ef9e3761 *R/as-grob.R
+8f6435d7c5a0299ab26cfb4393cea85a *R/grid-draw.R
+fb3e3dd9c1808e37009b42a194055d5a *R/plot_fun.R
+68fcf9975f9b0c9f4752215136c1e819 *build/vignette.rds
+99d98de1ff178bcc9debb1c8b6cfb4c6 *inst/doc/ggplotify.R
+194422519d9bffd0478fba3323dcd24b *inst/doc/ggplotify.Rmd
+9000c4c623000e7d799068f7121b6622 *inst/doc/ggplotify.html
+36d56365affeba938973e173f3bdae73 *man/as.ggplot.Rd
+89de12c04ba6226cfcff9464486f542d *man/as.grob.Rd
+fb2e548ca3f4947430c7e1d0337b2702 *man/base2grob.Rd
+194422519d9bffd0478fba3323dcd24b *vignettes/ggplotify.Rmd
