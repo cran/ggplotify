@@ -1,6 +1,6 @@
 Package: ggplotify
 Title: Convert Plot to 'grob' or 'ggplot' Object
-Version: 0.0.2
+Version: 0.0.3
 Authors@R: c(person("Guangchuang", "Yu", email = "guangchuangyu@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-6485-8781")))
 Description: Convert plot function call (using expression or formula) to 'grob' or 'ggplot' object that compatible to the 'grid' and 'ggplot2' ecosystem. With this package, we are able to e.g. using 'cowplot' to align plots produced by 'base' graphics, 'grid', 'lattice', 'vcd' etc. by converting them to 'ggplot' objects.
 Depends: R (>= 3.4.0)
@@ -13,10 +13,10 @@ URL: https://github.com/GuangchuangYu/ggplotify
 BugReports: https://github.com/GuangchuangYu/ggplotify/issues
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 NeedsCompilation: no
-Packaged: 2018-04-24 11:23:24 UTC; guangchuangyu
+Packaged: 2018-08-03 03:40:55 UTC; ygc
 Author: Guangchuang Yu [aut, cre] (<https://orcid.org/0000-0002-6485-8781>)
 Maintainer: Guangchuang Yu <guangchuangyu@gmail.com>
 Repository: CRAN
-Date/Publication: 2018-04-24 12:13:50 UTC
+Date/Publication: 2018-08-03 14:00:03 UTC

@@ -8,9 +8,10 @@ library("cowplot")
 library("grid")
 library("vcd")
 library("lattice")
-library("ggplotify")
 library("colorspace")
 library("ggimage")
+
+library("ggplotify")
 theme_set(theme_grey())
 
 ## ----warning=FALSE-------------------------------------------------------
