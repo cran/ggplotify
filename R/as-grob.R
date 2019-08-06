@@ -63,6 +63,20 @@ as.grob.trellis <- function(plot) {
 }
 
 ##' @rdname as-grob
+##' @method as.grob eulergram
+##' @importFrom grid grid.draw
+##' @export
+as.grob.eulergram <- function(plot) {
+    grid::grid.grabExpr(grid.draw(plot))
+}
+
+## ComplexHeatmap
+##' @rdname as-grob
+##' @method as.grob Heatmap
+##' @export
+as.grob.Heatmap <- as.grob.trellis
+
+##' @rdname as-grob
 ##' @method as.grob upset
 ##' @export
 as.grob.upset <- as.grob.trellis
@@ -110,5 +124,4 @@ base2grob <- function(x) {
 
     grid.grabExpr(grid.echo(plot_fun(x)), warn=0)
 }
-
 

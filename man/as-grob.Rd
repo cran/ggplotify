@@ -8,6 +8,8 @@
 \alias{as.grob.ggplot}
 \alias{as.grob.meme}
 \alias{as.grob.trellis}
+\alias{as.grob.eulergram}
+\alias{as.grob.Heatmap}
 \alias{as.grob.upset}
 \alias{as.grob.pheatmap}
 \alias{as.grob.magick-image}
@@ -27,6 +29,10 @@ as.grob(plot)
 \method{as.grob}{meme}(plot)
 
 \method{as.grob}{trellis}(plot)
+
+\method{as.grob}{eulergram}(plot)
+
+\method{as.grob}{Heatmap}(plot)
 
 \method{as.grob}{upset}(plot)
 

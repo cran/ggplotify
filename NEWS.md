@@ -1,3 +1,9 @@
+# ggplotify 0.0.4
+
++ `as.grob` method for `Heatmap` object (defined in ComplexHeatmap package) (2019-08-06, Tue)
++ `as.grob` method for `eulergram` object (defined in eulerr package) (2019-05-09, Thu)
+  - <https://github.com/GuangchuangYu/ggplotify/issues/5>
+
 # ggplotify 0.0.3
 
 + `as.grob` method for `pheatmap` object (2018-08-03, Fri)
