@@ -1,8 +1,8 @@
-## ----style, echo=FALSE, results="asis", message=FALSE--------------------
+## ----style, echo=FALSE, results="asis", message=FALSE-------------------------
 knitr::opts_chunk$set(tidy = FALSE,
 		   message = FALSE)
 
-## ----echo=FALSE, results="hide", message=FALSE---------------------------
+## ----echo=FALSE, results="hide", message=FALSE--------------------------------
 library("ggplot2")
 library("cowplot")
 library("grid")
@@ -14,7 +14,7 @@ library("ggimage")
 library("ggplotify")
 theme_set(theme_grey())
 
-## ----warning=FALSE-------------------------------------------------------
+## ----warning=FALSE------------------------------------------------------------
 library("grid")
 library("ggplotify")
 
@@ -30,7 +30,7 @@ library("lattice")
 data(mtcars)
 p5 <- as.grob(densityplot(~mpg|cyl, data=mtcars))
 
-## ----fig.width=7, fig.height=7-------------------------------------------
+## ----fig.width=7, fig.height=7------------------------------------------------
 grid.newpage()
 grid.draw(p1)
 vp = viewport(x=.35, y=.75, width=.35, height=.3)
@@ -38,7 +38,7 @@ pushViewport(vp)
 grid.draw(p2)
 upViewport()
 
-## ----warning=FALSE-------------------------------------------------------
+## ----warning=FALSE------------------------------------------------------------
 library(ggplot2)
 p1 <- as.ggplot(~barplot(1:10)) +
     annotate("text", x = .6, y = .5,
@@ -52,7 +52,7 @@ p4 <- as.ggplot(~mosaic(Titanic))
 
 p5 <- as.ggplot(densityplot(~mpg|cyl, data=mtcars))
 
-## ----fig.width=14, fig.height=12-----------------------------------------
+## ----fig.width=14, fig.height=12----------------------------------------------
 library(cowplot)
 
 library(colorspace)
