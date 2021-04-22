@@ -1,3 +1,9 @@
+# ggplotify 0.0.6
+
++ `aplot` object supported (2020-03-27, Fri)
+  - <https://github.com/YuLab-SMU/aplot>
++ angle parameter in `as.ggplot` (2020-03-16, Mon)
+
 # ggplotify 0.0.5
 
 + `hjust` and `vjust` parameters in `as.ggplot` (2020-03-11, Wed)
@@ -41,7 +47,7 @@ of ChIPseq data in 2015, <http://guangchuangyu.github.io/2015/07/upsetplot-in-ch
 
 I developed a `subview` function in `ggtree` package in 2015, for embeding
 subplots,
-<https://github.com/GuangchuangYu/ggtree/commit/2ab2876d5e92454869c3307ea6f3c8e2656630ef>.
+<https://github.com/YuLab-SMU/ggtree/commit/2ab2876d5e92454869c3307ea6f3c8e2656630ef>.
 
 This function was re-implemented as `geom_subview` and packed in the `ggimage`
 package.

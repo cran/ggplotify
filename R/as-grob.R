@@ -14,6 +14,14 @@ as.grob <- function(plot) {
 }
 
 ##' @rdname as-grob
+##' @method as.grob aplot
+##' @export
+as.grob.aplot <- function(plot) {
+    aplotGrob <- utils::getFromNamespace("aplotGrob", "aplot")
+    aplotGrob(plot)
+}
+
+##' @rdname as-grob
 ##' @method as.grob expression
 ##' @export
 as.grob.expression <- function(plot) {
