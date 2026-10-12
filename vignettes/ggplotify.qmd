@@ -1,0 +1,332 @@
+---
+title: "Convert plots to grob and ggplot objects"
+author: "Guangchuang Yu\\
+
+        School of Basic Medical Sciences, Southern Medical University"
+date: "`r Sys.Date()`"
+format:
+  html:
+    toc: true
+    theme: cosmo
+    highlight: github
+vignette: >
+  %\VignetteIndexEntry{Convert plots to grob and ggplot objects}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{ggplot2}
+  %\VignetteDepends{grid}
+  %\VignetteDepends{lattice}
+  %\VignetteDepends{vcd}
+  %\VignetteDepends{colorspace}
+  %\VignetteDepends{aplot}
+  %\VignetteDepends{patchwork}
+---
+
+```{r}
+#| echo: false
+#| results: hide
+knitr::opts_chunk$set(fig.width = 8, fig.height = 4.5, message = FALSE)
+```
+
+`ggplotify` converts a plot into a `grob` or a `ggplot` object. Two functions do
+the work, `as.grob()` and `as.ggplot()`, and both accept four kinds of input:
+
+- a plot call, written as a formula (`~barplot(1:10)`) or an `expression`
+- a function that draws to a graphics device when it is called
+- a graphic object produced by another package, such as a `ggplot` or `trellis`
+- a plot captured by `grDevices::recordPlot()`
+
+The output is an ordinary `grid` object, so a plot drawn by base graphics can be
+arranged, aligned, annotated and inset like a `ggplot2` plot. The classes
+`as.grob()` dispatches on are listed at the end of this document.
+
+## Plot calls
+
+```{r}
+#| warning: false
+library(ggplot2)
+library(ggplotify)
+
+p1 <- as.grob(~barplot(1:10, main = "formula"))
+p2 <- as.grob(expression(barplot(11:20, main = "expression")))
+p3 <- as.grob(function() barplot(21:30, main = "function"))
+```
+
+`as.grob()` replays the call on a graphics device and captures the result with
+`gridGraphics::grid.echo()`. A formula or an expression is evaluated in the
+environment `as.grob()` was called from, which is the global environment at the
+top level. A variable that is local to the function doing the conversion is
+therefore not visible, and needs `envir`:
+
+```{r}
+#| eval: false
+as.grob(~barplot(n), envir = environment())
+```
+
+A function is simply called, which makes it the most general form: any code that
+draws to a device works, and it carries its own environment with it.
+
+## Graphic objects
+
+A plot that already exists as an object needs no call to be written for it, and
+`as.grob()` takes it directly. Some classes are converted straight from the
+object, others are drawn once into a device and captured from there.
+
+```{r}
+#| warning: false
+library(lattice)
+
+p4 <- as.grob(densityplot(~mpg | cyl, data = mtcars))
+p5 <- as.grob(ggplot(mtcars, aes(wt, mpg)) + geom_point())
+```
+
+`p4` is a `trellis` object returned by `lattice` and `p5` is a `ggplot2` plot.
+Converting a `ggplot` object gives back the `gtable` built by
+`ggplot2::ggplotGrob()`, and a `grob` is returned unchanged.
+
+## Recorded plots
+
+`grDevices::recordPlot()` stores the display list of the current device. On most
+file devices that list is not kept unless it is switched on, so
+`dev.control(displaylist = "enable")` has to come before the plot is drawn.
+
+```{r}
+#| fig.height: 6
+#| warning: false
+pdf(tempfile(fileext = ".pdf"))
+dev.control(displaylist = "enable")
+plot(1:10, type = "b", main = "recorded")
+recording <- recordPlot()
+invisible(dev.off())
+
+as.ggplot(recording)
+```
+
+This makes it possible to draw a plot once, keep the recording, and place it in a
+composed figure later. A recording of a device whose display list stayed
+inhibited holds no graphics, and `as.grob()` says so rather than returning an
+empty grob.
+
+```{r}
+#| warning: false
+pdf(tempfile(fileext = ".pdf"))
+plot(1:10)
+empty <- recordPlot()
+invisible(dev.off())
+
+try(as.grob(empty))
+```
+
+Replaying a recording needs the same R version, the same type of graphics device
+and the packages that drew the original plot, and it is only guaranteed within
+the session that called `recordPlot()`.
+
+## Drawing with grid
+
+A converted plot is a `grob`, so `grid.draw()` renders it and `pushViewport()`
+places it inside another plot.
+
+```{r}
+#| fig.width: 7
+#| fig.height: 7
+#| warning: false
+library(grid)
+
+grid.newpage()
+grid.draw(p1)
+vp <- viewport(x = .4, y = .72, width = .4, height = .35)
+pushViewport(vp)
+grid.draw(p2)
+upViewport()
+```
+
+`grid.draw()` has methods for the three call forms as well, so no conversion is
+needed when the only goal is to draw a plot.
+
+```{r}
+#| warning: false
+grid.draw(~barplot(1:10))
+```
+
+## Converting to a ggplot object
+
+`as.ggplot()` puts the converted grob into a `ggplot2` plot with a blank panel
+and `theme_void()`. Layers, scales and themes can then be added on top of the
+original figure.
+
+```{r}
+#| warning: false
+as.ggplot(~barplot(1:10)) +
+    annotate("text", x = .6, y = .5, label = "Hello base plot",
+             size = 6, color = "firebrick", angle = 45) +
+    annotate("point", x = .2, y = .8, color = "steelblue", size = 4)
+```
+
+`scale`, `hjust` and `vjust` place the original figure in a rectangle, and
+`angle` rotates it. The rectangle runs from `1 - scale` to `scale` on both axes
+and is shifted by `hjust` and `vjust`, so `scale = 1` fills the panel and
+`scale = .9` leaves a tenth of it at every edge. The figure is clipped to that
+rectangle rather than shrunk into it, which is why a small `scale` cuts titles
+and axis labels off instead of drawing them smaller. In practice `scale` stays
+close to 1.
+
+```{r}
+#| warning: false
+as.ggplot(~barplot(1:10, main = "base plot"), scale = .95, hjust = .05, vjust = .05)
+```
+
+`angle` rotates the figure. A rotated figure goes through a viewport rather
+than the rectangle above, and `scale` is the width of that viewport.
+
+```{r}
+#| warning: false
+as.ggplot(~plot(1:10, type = "b", main = "base plot"), angle = 90,
+          scale = .6, hjust = -.15)
+```
+
+Grid cannot clip to a viewport that is rotated by something other than a
+multiple of 90 degrees, so a non-right angle emits the warning
+`cannot clip to rotated viewport` once for every clipped grob. The figure is
+still drawn.
+
+```{r}
+#| warning: false
+as.ggplot(~plot(1:10, type = "b", main = "base plot"), angle = 45, scale = .45)
+```
+
+A plot drawn by a `grid` based package converts the same way. Capture it with
+`grid2grob()` rather than a formula: a formula is replayed by
+`gridGraphics::grid.echo()`, which does not understand the grid drawing
+operations of the original plot and emits one
+`unsupported operation on the graphics display list` warning for every
+operation it cannot replay. `vcd::mosaic` here, with a `ggplot2` annotation
+added on top of it.
+
+```{r}
+library(vcd)
+data(Titanic)
+
+as.ggplot(grid2grob(mosaic(Survived ~ Sex, data = as.data.frame(Titanic)))) +
+    annotate("label", x = .5, y = .97, label = "converted from vcd",
+             size = 4.5, fill = "white")
+```
+
+## Arranging plots
+
+`aplot` lays out plots with `patchwork` and calls `as.ggplot()` on any input that
+is not a plot object, so base plots can be mixed with `ggplot2` plots without a
+conversion step.
+
+```{r}
+#| fig.width: 12
+#| fig.height: 7
+#| warning: false
+library(aplot)
+
+plot_list(~barplot(1:10), ggplot(mtcars, aes(wt, mpg)) + geom_point(),
+          ~plot(sin), densityplot(~mpg | cyl, data = mtcars),
+          ncol = 2, labels = LETTERS[1:4])
+```
+
+A list of already converted grobs can be arranged the same way.
+
+```{r}
+#| fig.width: 12
+#| fig.height: 4
+#| warning: false
+plot_list(gglist = list(p1, p2, p3, p5), ncol = 4, widths = c(1, 1, 1, 1.2))
+```
+
+Two panels side by side, the same data drawn by the two graphics systems.
+`colorspace` provides one palette for both, so the colors match. Joining the two
+with `+` is patchwork's doing: loading it registers a `+.gg` method that takes
+over from the one in `ggplot2`.
+
+```{r}
+#| fig.width: 10
+#| fig.height: 4.5
+#| warning: false
+library(colorspace)
+library(patchwork)
+
+col <- rainbow_hcl(3)
+color <- col[iris$Species]
+
+as.ggplot(~plot(iris$Sepal.Length, iris$Sepal.Width, col = color, pch = 15,
+                xlab = "Sepal.Length", ylab = "Sepal.Width",
+                main = "base graphics"),
+          scale = .9) +
+    ggplot(iris, aes(Sepal.Length, Sepal.Width, color = Species)) +
+    geom_point(shape = 15) +
+    scale_color_manual(values = col, name = "") +
+    ggtitle("ggplot2")
+```
+
+## Insetting one plot into another
+
+`ggplot2::annotation_custom()` takes a grob and places it at data coordinates,
+which is the simplest way to inset a converted plot.
+
+```{r}
+#| fig.width: 8
+#| warning: false
+ggplot(iris, aes(Sepal.Length, Sepal.Width, color = Species)) +
+    geom_point() +
+    annotation_custom(as.grob(recording), xmin = 6, xmax = 7.8,
+                      ymin = 3.3, ymax = 4.4)
+```
+
+The inset is clipped to the panel and is positioned in data coordinates. When
+the position should instead be relative to the page, `grid.draw()` inside a
+`viewport()`, as shown above, does the job.
+
+## Insets and subviews
+
+Every example above ends as an ordinary `grid` object, and that is the point of
+the package. A plot drawn by base graphics, a `lattice` panel, a `vcd` diagram
+and a captured recording all become the same kind of object, so any package that
+can place a grob can place them.
+
+`ggplot2::annotation_custom()` is the simplest case, and the one just shown.
+`aplot::insert_left()`, `insert_right()`, `insert_top()` and `insert_bottom()`
+attach a second plot as a marginal panel, and a converted plot is a `ggplot`
+object, so it goes wherever a `ggplot2` plot goes.
+
+`ggimage::geom_subview()` puts plots inside a panel at data coordinates and
+sizes them with `width` and `height`. Its subviews come either from a column of
+the data or from the `subview` argument, and each one is converted with
+`as.grob()`, so that column may hold a formula, a function, a `ggplot`, a
+`trellis` object, a `recordedplot` or a grob. A figure that only base graphics
+can draw is then an inset in exactly the same way a `ggplot2` plot is. `ggimage`
+re-exports `as.grob()` and `as.ggplot()`, so a user of that package has the
+converters attached already.
+
+Worked subview examples are in the `ggimage` documentation and vignette, which is
+where the feature is developed. This vignette stops at the conversion.
+
+## Supported input classes
+
+`as.ggplot()` accepts everything `as.grob()` does, since it converts the input
+and then wraps it. Methods that belong to another package are looked up when
+they are needed, so that package only has to be installed, not loaded.
+
+| Input class | Produced by |
+|---|---|
+| `formula`, `expression`, `function` | any base graphics code |
+| `recordedplot` | `grDevices::recordPlot()` |
+| `grob` | `grid` |
+| `ggplot` | `ggplot2` |
+| `patchwork` | `patchwork` |
+| `aplot`, `oncoplot`, `gglist` | `aplot` |
+| `trellis` | `lattice` |
+| `Heatmap` | `ComplexHeatmap` |
+| `pheatmap` | `pheatmap` |
+| `eulergram` | `eulerr` |
+| `upset` | `UpSetR` |
+| `meme` | `meme` |
+| `tmap` | `tmap` |
+| `bbplot` | `ggbio` |
+| `magick-image` | `magick` |
+
+A `gTree` has no method of its own and is handled by the `grob` method, since it
+inherits from `grob`.

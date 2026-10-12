@@ -15,6 +15,7 @@ S3method(as.grob,meme)
 S3method(as.grob,oncoplot)
 S3method(as.grob,patchwork)
 S3method(as.grob,pheatmap)
+S3method(as.grob,recordedplot)
 S3method(as.grob,tmap)
 S3method(as.grob,trellis)
 S3method(as.grob,upset)
@@ -25,22 +26,28 @@ export(as.ggplot)
 export(as.grob)
 export(base2grob)
 export(grid2grob)
-importFrom(ggplot2,aes)
-importFrom(ggplot2,annotation_custom)
-importFrom(ggplot2,geom_blank)
-importFrom(ggplot2,ggplot)
-importFrom(ggplot2,ggplotGrob)
-importFrom(ggplot2,scale_x_continuous)
-importFrom(ggplot2,scale_y_continuous)
-importFrom(ggplot2,theme_void)
-importFrom(grDevices,dev.list)
-importFrom(grDevices,dev.new)
-importFrom(grDevices,dev.off)
+importFrom(ggplot2,
+  aes,
+  annotation_custom,
+  geom_blank,
+  ggplot,
+  ggplotGrob,
+  scale_x_continuous,
+  scale_y_continuous,
+  theme_void
+)
+importFrom(grDevices,
+  dev.list,
+  dev.new,
+  dev.off
+)
 importFrom(graphics,par)
-importFrom(grid,grid.draw)
-importFrom(grid,grid.grabExpr)
-importFrom(grid,rasterGrob)
-importFrom(grid,viewport)
+importFrom(grid,
+  grid.draw,
+  grid.grabExpr,
+  rasterGrob,
+  viewport
+)
 importFrom(gridGraphics,grid.echo)
 importFrom(rlang,sym)
 importFrom(yulab.utils,get_fun_from_pkg)
